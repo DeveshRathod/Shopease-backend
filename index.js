@@ -24,7 +24,7 @@ app.listen(process.env.PORT, "0.0.0.0", () => {
 });
 
 app.get("/api/health", (req, res) => {
-  res.status(200).json({ status: "Server Health Okay" });
+  res.status(200).json({ status: "Server Health Okay!" });
 });
 
 // routes
