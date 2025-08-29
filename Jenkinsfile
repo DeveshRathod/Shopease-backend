@@ -15,8 +15,9 @@ pipeline {
         stage('Determine Image Tag') {
             steps {
                 script {
-                    env.IMAGE_TAG = sh(script: "git rev-parse --short HEAD", returnStdout: true).trim()
-                    echo "Using commit SHA as IMAGE_TAG: ${env.IMAGE_TAG}"
+                    // Get commit message and sanitize
+                    env.IMAGE_TAG = sh(script: "git log -1 --pretty=%s | tr '[:upper:]' '[:lower:]' | tr -cs 'a-z0-9' '-'", returnStdout: true).trim()
+                    echo "Using commit message as IMAGE_TAG: ${env.IMAGE_TAG}"
                 }
             }
         }
