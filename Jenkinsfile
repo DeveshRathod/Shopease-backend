@@ -15,9 +15,15 @@ pipeline {
         stage('Determine Image Tag') {
             steps {
                 script {
-                    // Get commit message and sanitize
-                    env.IMAGE_TAG = sh(script: "git log -1 --pretty=%s | tr '[:upper:]' '[:lower:]' | tr -cs 'a-z0-9' '-'", returnStdout: true).trim()
-                    echo "Using commit message as IMAGE_TAG: ${env.IMAGE_TAG}"
+                    def commitMsg = sh(script: "git log -1 --pretty=%s", returnStdout: true).trim()
+                    
+                    if (commitMsg ==~ /^v[0-9]+\.[0-9]+\.[0-9]+$/) {
+                        env.IMAGE_TAG = commitMsg
+                    } else {
+                        error "Commit message '${commitMsg}' is not a valid version (expected format vX.Y.Z)"
+                    }
+
+                    echo "Using semantic version as IMAGE_TAG: ${env.IMAGE_TAG}"
                 }
             }
         }
